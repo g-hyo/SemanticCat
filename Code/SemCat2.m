@@ -1,9 +1,8 @@
 %% Simple semantic categorization task either in Chinese or in Spanish
 % Written by Gabriel Ong 5/2/2019
 
-% To do: Delete all references to cues. 
-% Use drawcross
-% Randomise left-right responses
+
+
 
 %% TODO: Similar to final name
 % Clear all variables and the screen
@@ -25,8 +24,9 @@ pdims = pdims * 1; % Multiply size of picture by scalar
 %% Audio and Screen Settings
 %AudioSettings; 
 [y, Fs] = audioread('error.wav'); % load error sound
+Box; % Initialise RT box
 PTBsettings; % Change this code if you want to run debug mode
-RestrictKeysForKbCheck([27, 37, 39, 32]); % Only use esc, left, right and spacebar keys
+
 
 %% Code used to Enter Subject Information
 [subject study.filename] = SubjInfo(wPtr, lang);
@@ -58,15 +58,18 @@ curtrial=min(tmp(isnan(subj.pt)));
 %% Now let's present some instructions!
 Screen('TextSize', wPtr, 15);
 
-line2 =sprintf('\n In this task you need to state whether the number which appears is odd or even'); %\n means new line
+line2 =sprintf('\n In this task you need to indicate whether the number which appears is odd or even'); %\n means new line
 line3 = sprintf('\n \n The numbers will be written in either their English or %s word forms.',lang); 
 line4 = sprintf('\n \n \n If the number is even, press the left button. If the number is odd, press the right button'); % This is below line 1. 
 line5 = '\n \n \n \n Incorrect trials will be indicated with a buzzing noise. Correct trials will proceed without any sound';
-line6 = '\n \n \n \n \n Press spacebar to begin with some practice trials'; 
+line6 = '\n \n \n \n \n Press either button to begin with some practice trials'; 
 DrawFormattedText(wPtr, [line2 line3 line4 line5 line6], 'center', 'center', black);
 Screen('Flip', wPtr);
 WaitSecs(.5);
-KbWait;
+
+%buttonState = PsychRTBox('WaitButtonDown', handle, {'odd','even'});
+%WaitButton; % Wait for button response
+RTBox(1000); 
 Screen('TextSize', wPtr, fontsize);
 
 %% Let's present practice trials
@@ -86,8 +89,8 @@ line5 = '\n \n \n \n \n Press any key to continue';
 DrawFormattedText(wPtr, [line2 line3 line4 line5], 'center', 'center', black);
 Screen('Flip', wPtr);
 WaitSecs(.5);
-KbWait;
 
+RTBox(1000); 
 
 %% %% Now let's run the task based on the language
 

@@ -13,6 +13,5 @@
           
 
           WaitSecs(iti);
-        %  buttonState = PsychRTBox('WaitButtonDown', handle, {'odd','even'});   
-         RTBox(1000); %Wait
+          buttonState = PsychRTBox('WaitButtonDown', handle, {'odd','even'});      
           Screen('TextSize', wPtr, fontsize);

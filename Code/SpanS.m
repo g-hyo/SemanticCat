@@ -28,48 +28,53 @@ for trial = curtrial:numtrials;
     DrawFormattedText(wPtr, tstim, 'center', 'center');        
     
     WaitSecs(cit); %Jitters prestim interval is 1 second. This will be the fixation duration for the flag
-    subj.pt(trial) = Screen('Flip', wPtr); % Record flip time
-    
-    
-    %%%% KEY RESPONSE %%%%
-    keyIsDown = 0;
-    
-    while ~keyIsDown
-    [keyIsDown, secs, keyCode] = KbCheck; 
-        if keyCode(27) % Escape if escape is pressed
+   
+    %% Check for escape routine (before trial begins so we don't mess with that timing)
+    [keyisdown, secs, keyCode] = KbCheck;
+    if keyCode(27) % Escape if escape is pressed
             ShutDown
             sca;
             return
-       
-        elseif keyCode(37) % If left is pressed
-            if mod(stim,2) == 0 % If EVEN press a
-               subj.response(trial)= 1;
-            else
-              sound(y, Fs);
-              subj.response(trial)= 0;
-            end
-        
-            % Add results to matrix
-            subj.RT(trial) = secs-subj.pt(trial);
-  
-        elseif keyCode(39) % If right is pressed
-            if mod(stim,2) == 1 % If ODD press l
-               subj.response(trial)= 1;
-            else
-              sound(y, Fs);
-              subj.response(trial)= 0;
-            end
-        
-            % Add results to matrix
-            subj.RT(trial) = secs-subj.pt(trial);
-        
-        elseif keyCode(32) % If spacebar is pressed for whatever reason, punish. 
-              sound(y, Fs);
-              subj.response(trial)= -1;
-     
-        end  
+          end
+          
+    subj.pt(trial) = Screen('Flip', wPtr); % Record flip time and present stimulus
+         
     
-    end  
+  %% RT box response
+%     PsychRTBox('Clear', handle); % Flush events before collecting response
+    RTBox('clear'); % clear buffer and sync clocks before stimulus onset
+    tPress = []; % Set up empty matrix for 
+     
+     % Query RTbox for a response
+  %   while isempty(tPress);
+        [tPress, evt] = RTBox(100); % Wait 100 seconds for a response
+   %  end
+     
+     
+        if strcmp(evt, 'even') == 1; % If left button is pressed
+            if mod(stim,2) == 0 % If EVEN 
+               subj.response(trial)= 1;
+            else
+              sound(y, Fs);
+              subj.response(trial)= 0;
+            end
+        
+        
+         % Add results to matrix
+            subj.RT(trial) = tPress-subj.pt(trial);
+  
+        elseif strcmp(evt, 'odd') == 1; % If right is pressed
+            if mod(stim,2) == 1 % If ODD 
+               subj.response(trial)= 1;
+            else
+              sound(y, Fs);
+              subj.response(trial)= 0;
+            end
+        
+            % Add results to matrix
+            subj.RT(trial) = tPress-subj.pt(trial);
+        end
+     
     %%% END KEY RESPONSE %%%%%
     
     
